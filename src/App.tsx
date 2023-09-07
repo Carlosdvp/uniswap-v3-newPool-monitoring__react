@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
 import './App.css'
+import Header from './components/Header';
 
 const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
 
@@ -69,6 +70,8 @@ function App() {
   }
 
   return (
+    <>
+    <Header />
     <div className="w-[60%] min-w-[560px] bg-blue-900 text-white h-[50vh] max-h-[460px] min-h-[400px] pt-10 mt-10 justify-center mx-auto my-0">
       <div className="flex flex-col items-center">
         <label className="text-lg mb-8">
@@ -106,6 +109,7 @@ function App() {
         ))}
       </div>
     </div>
+    </>
   )
 }
 
