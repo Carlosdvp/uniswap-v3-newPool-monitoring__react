@@ -1,6 +1,10 @@
-import { RouteProps } from 'react-router-dom';
-import App from '../App'
+import { createBrowserRouter } from 'react-router-dom';
+import DisplayPools from '../components/DisplayPools';
+import { TokenBalances } from '../components/TokenBalances';
+import App from '../App';
 
-export const routes: RouteProps[] = [
+export const router = createBrowserRouter([
   { path: '/', element: <App /> },
-];
+  { path: '/pools', element: <DisplayPools /> },
+  { path: '/token-balances', element: <TokenBalances /> },
+])
