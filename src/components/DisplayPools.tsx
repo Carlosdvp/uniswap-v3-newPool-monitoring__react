@@ -81,11 +81,10 @@ const DisplayPools = () => {
     ));
   }
 
-  const getPoolData = async () => {
-    const data = await displayPoolAddresses(fromBlock)
-    console.log('data button: ', data)
-    displayPools(data, startIndex)
+  const getPoolData = async (): Promise<void> => {
+    const data: EventDetails[] = await displayPoolAddresses(fromBlock)
 
+    displayPools(data, startIndex)
     setPoolData(data);
     setStartIndex((prevIndex) => prevIndex + 10);
   }
@@ -115,40 +114,47 @@ const DisplayPools = () => {
           value={fromBlock}
           onChange={(e) => setFromBlock(Number(e.target.value))}
           placeholder="from block"
-          className="mb-6 px-2 py-1 w-[20%] text-black"
+          className="mb-2 px-2 py-1 w-[20%] text-black border border-blue-400"
         />
         <button
           onClick={getPoolData}
-          className="bg-blue-400 text-white px-6 py-2 hover:bg-white hover:text-black">
+          className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black mb-4">
           Get Data
         </button>
       </div>
 
-      <div className='p-6'>
-        <p className='py-6 pl-4 bg-slate-200'>
-          Number of Pools Created since block <strong>{fromBlock} :</strong> 
-          <span className='text-blue-800 font-bold pl-6 text-xl'>{poolData.length}</span>
-        </p>
-        {displayPools(poolData, startIndex)}
+      <div>
+        <div className='py-6 pl-4 bg-blue-200'>
+          <p className='pb-2'>
+            Number of Pools Created since block <strong>{fromBlock} :</strong> 
+            <span className='text-blue-800 font-bold pl-6 text-xl'>{poolData.length}</span>
+          </p>
+          <p>
+            Clicking on a Pool Address will take you to the Etherscan page for that contract.
+          </p>
+        </div>
+        <div className='py-6 pl-12 w-[60%] min-w-[600px] mx-auto my-0 justify-items-center'>
+          {displayPools(poolData, startIndex)}
+        </div>
       </div>
 
-      <div className='flex flex-row w-[50%] items-center py-6 mx-auto my-0 border-2 border-slate-600'>
+      <div className='flex flex-row w-[50%] min-w-[500px] items-center py-6 mx-auto my-0 border-2 border-blue-600'>
         <div className='flex flex-col w-[50%] items-center'>
           <label className='mb-2'>
-            Show next 10 Transactions
+            Show next 10 Pools
           </label>
           <button
-            className='bg-slate-600 text-white hover:bg-slate-200 hover:text-slate-700 py-2 px-4 border border-red-950 rounded-md w-[50%]'
+            className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
             onClick={handleNextButtonClick}>
             Next 10
           </button>  
         </div>
         <div className='flex flex-col w-[45%] items-center'>
           <label className='mb-2'>
-            Reset Transactions Display
+            Return to Beginning
           </label>
           <button
-            className='bg-slate-600 text-white hover:bg-slate-200 hover:text-slate-700 py-2 px-4 border border-red-950 rounded-md w-[50%]'
+            className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
             onClick={handleResetButtonClick}>
             Reset
           </button>
