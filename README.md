@@ -32,3 +32,13 @@ The Home page gives the user some basic instructions and information about the a
 ## Version 3
 
 Implement state management for data persistence.
+
+
+## Version 4 -- TODO
+
+- create a box for the Find Pools component similar to what we have in the Token Balances page
+- make the look more uniform across the app
+- add a second box to the Find Pools page
+    - here the user should be able to enter a number of hours in the past to get the last block mined near that target time.
+    - and then display the block number the same way the token balances are displayed
+- this will make it easier to get a block number to get started with the information gathering

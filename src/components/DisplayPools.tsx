@@ -1,7 +1,9 @@
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
-import Header from "./Header"
+import Header from './Header'
+import { setPoolData } from '../store/poolDataSlice'
 
 interface EventDetails {
   txHash: string; 
@@ -21,8 +23,9 @@ const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi
 const DisplayPools = () => {
   const [fromBlock, setFromBlock] = useState<number>(0);
   const [startIndex, setStartIndex] = useState<number>(0);
-  const [poolData, setPoolData] = useState<EventDetails[]>([]);
+  const [poolEventData, setPoolEventData] = useState<EventDetails[]>([]);
   const [resetCount, setResetCount] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   const displayPoolAddresses = async (fromBlock: number) => {
     let eventDetails: EventDetails[] = [];
@@ -85,7 +88,9 @@ const DisplayPools = () => {
     const data: EventDetails[] = await displayPoolAddresses(fromBlock)
 
     displayPools(data, startIndex)
-    setPoolData(data);
+    setPoolEventData(data);
+    // update the store
+    dispatch(setPoolData(data));
     setStartIndex((prevIndex) => prevIndex + 10);
   }
 
@@ -127,14 +132,14 @@ const DisplayPools = () => {
         <div className='py-6 pl-4 bg-blue-200'>
           <p className='pb-2'>
             Number of Pools Created since block <strong>{fromBlock} :</strong> 
-            <span className='text-blue-800 font-bold pl-6 text-xl'>{poolData.length}</span>
+            <span className='text-blue-800 font-bold pl-6 text-xl'>{poolEventData.length}</span>
           </p>
           <p>
             Clicking on a Pool Address will take you to the Etherscan page for that contract.
           </p>
         </div>
         <div className='py-6 pl-12 w-[60%] min-w-[600px] mx-auto my-0 justify-items-center'>
-          {displayPools(poolData, startIndex)}
+          {displayPools(poolEventData, startIndex)}
         </div>
       </div>
 
