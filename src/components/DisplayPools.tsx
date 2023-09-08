@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
 import Header from './Header'
-import { setPoolData } from '../store/poolDataSlice'
+import { setPoolData, setFromBlock } from '../store/poolDataSlice'
 import { RootState } from '../store'
 
 interface EventDetails {
@@ -22,13 +22,19 @@ const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
 const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 const DisplayPools = () => {
-  const [fromBlock, setFromBlock] = useState<number>(0);
+  // const [fromBlock, setFromBlock] = useState<number>(0);
   const [startIndex, setStartIndex] = useState<number>(0);
   const [poolEventData, setPoolEventData] = useState<EventDetails[]>([]);
   const [resetCount, setResetCount] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const poolData = useSelector((state: RootState) => state.poolData.data); 
+  const poolData = useSelector((state: RootState) => state.poolData.data);
+  const fromBlock = useSelector((state: RootState) => state.poolData.fromBlock);
+
+  const handleBlockNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const blockNumber = Number(e.target.value);
+    dispatch(setFromBlock(blockNumber));
+  };
 
   useEffect(() => {
     setPoolEventData(poolData);
@@ -96,8 +102,7 @@ const DisplayPools = () => {
 
     displayPools(data, startIndex)
     setPoolEventData(data);
-    // update the store
-    dispatch(setPoolData(data));
+    dispatch(setPoolData(data)); // update the store
     setStartIndex((prevIndex) => prevIndex + 10);
   }
 
@@ -124,7 +129,7 @@ const DisplayPools = () => {
         <input
           type="number"
           value={fromBlock}
-          onChange={(e) => setFromBlock(Number(e.target.value))}
+          onChange={handleBlockNumberChange}
           placeholder="from block"
           className="mb-2 px-2 py-1 w-[20%] text-black border border-blue-400"
         />
