@@ -1,9 +1,10 @@
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
 import Header from './Header'
 import { setPoolData } from '../store/poolDataSlice'
+import { RootState } from '../store'
 
 interface EventDetails {
   txHash: string; 
@@ -26,6 +27,12 @@ const DisplayPools = () => {
   const [poolEventData, setPoolEventData] = useState<EventDetails[]>([]);
   const [resetCount, setResetCount] = useState<boolean>(false);
   const dispatch = useDispatch();
+
+  const poolData = useSelector((state: RootState) => state.poolData.data); 
+
+  useEffect(() => {
+    setPoolEventData(poolData);
+  }, [poolData]);
 
   const displayPoolAddresses = async (fromBlock: number) => {
     let eventDetails: EventDetails[] = [];

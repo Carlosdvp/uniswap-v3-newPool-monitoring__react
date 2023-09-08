@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { Draft, PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface EventDetails {
   txHash: string;
@@ -7,13 +7,17 @@ interface EventDetails {
   poolAddress: string;
 }
 
+interface PoolDataState {
+  data: EventDetails[];
+}
+
 const poolDataSlice = createSlice({
   name: 'poolData',
   initialState: {
     data: [] as EventDetails[]
   },
   reducers: {
-    setPoolData: (state, action: PayloadAction<EventDetails[]>) => {
+    setPoolData: (state: Draft<PoolDataState>, action: PayloadAction<EventDetails[]>) => {
       state.data = action.payload;
     }
   }
