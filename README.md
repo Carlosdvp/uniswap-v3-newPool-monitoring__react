@@ -14,3 +14,21 @@ Instructions for it's use:
       - Token symbols
 
 
+## Version 2
+
+Now the app has three pages:
+    - Home
+    - Find Pools
+    - Token Balances
+
+The initial functionality is now in the Token Balances page.
+
+The Find Pools page will return all the newly creeated Pools on Uniswap V3 using an input fromBlock.
+
+Each returned Pool Address will be listed on the page 10 at a time.
+
+The Home page gives the user some basic instructions and information about the app.
+
+## Version 3
+
+Implement state management for data persistence.
