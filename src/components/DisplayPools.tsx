@@ -22,7 +22,6 @@ const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
 const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 const DisplayPools = () => {
-  // const [fromBlock, setFromBlock] = useState<number>(0);
   const [startIndex, setStartIndex] = useState<number>(0);
   const [poolEventData, setPoolEventData] = useState<EventDetails[]>([]);
   const [resetCount, setResetCount] = useState<boolean>(false);
@@ -103,7 +102,7 @@ const DisplayPools = () => {
     displayPools(data, startIndex)
     setPoolEventData(data);
     dispatch(setPoolData(data)); // update the store
-    setStartIndex((prevIndex) => prevIndex + 10);
+    setStartIndex((prevIndex) => prevIndex);
   }
 
   useEffect(() => {
@@ -128,7 +127,7 @@ const DisplayPools = () => {
         </p>
         <input
           type="number"
-          value={fromBlock}
+          value={fromBlock || ''}
           onChange={handleBlockNumberChange}
           placeholder="from block"
           className="mb-2 px-2 py-1 w-[20%] text-black border border-blue-400"

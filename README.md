@@ -33,6 +33,11 @@ The Home page gives the user some basic instructions and information about the a
 
 Implement state management for data persistence.
 
+App now does the following:
+    - when a user enters a block number in the input field this data is saved in the store
+    - when the Get Data button is clicked the pool data is saved to a Redux store
+    - data displayed now stays visible when we navigate to another page and then back again.
+
 
 ## Version 4 -- TODO
 
