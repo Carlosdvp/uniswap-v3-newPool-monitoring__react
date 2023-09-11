@@ -1,6 +1,6 @@
 export const Home = () => {
   return (
-    <div className='flex flex-col w-[80%] mx-auto my-0 pt-12 p-6 bg-blue-100 items-center h-full'>
+    <div className='flex flex-col w-[80%] mx-auto my-8 pt-12 p-6 bg-blue-100 items-center h-full'>
       <h1 className='text-center py-8 font-semibold text-xl'>
         Uniswap V3 Monitoring App
       </h1>
