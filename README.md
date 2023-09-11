@@ -38,12 +38,8 @@ App now does the following:
     - when the Get Data button is clicked the pool data is saved to a Redux store
     - data displayed now stays visible when we navigate to another page and then back again.
 
+## Version 4 -- Current version
 
-## Version 4 -- TODO
-
-- create a box for the Find Pools component similar to what we have in the Token Balances page
-- make the look more uniform across the app
-- add a second box to the Find Pools page
-    - here the user should be able to enter a number of hours in the past to get the last block mined near that target time.
-    - and then display the block number the same way the token balances are displayed
+- make the styling look more uniform across the app
+- add a display for the current block, it will update every 30 seconds
 - this will make it easier to get a block number to get started with the information gathering
