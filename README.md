@@ -43,3 +43,7 @@ App now does the following:
 - make the styling look more uniform across the app
 - add a display for the current block, it will update every 30 seconds
 - this will make it easier to get a block number to get started with the information gathering
+
+## Bug
+
+- for some weird reason it appears that AWS Amplify is using the wrong html file for the deployment of the application.
