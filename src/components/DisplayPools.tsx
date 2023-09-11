@@ -114,69 +114,69 @@ const DisplayPools = () => {
   
   return (
     <>
-    <Header />
-
-    <div>
-      <h1 className='text-red-900 font-semibold text-3xl text-center py-12'>
-        Recently Created Pools on Uniswap V3
-      </h1>
-
-      <div className="flex flex-col items-center">
-        <p className='pb-4'>
-          To fetch the Recent Pool Created events, enter a value for the <i>fromBlock</i>, the <i>toBlock</i> will be the 'latest' block.
-        </p>
-        <input
-          type="number"
-          value={fromBlock || ''}
-          onChange={handleBlockNumberChange}
-          placeholder="from block"
-          className="mb-2 px-2 py-1 w-[20%] text-black border border-blue-400"
-        />
-        <button
-          onClick={getPoolData}
-          className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black mb-4">
-          Get Data
-        </button>
-      </div>
+      <Header />
 
       <div>
-        <div className='py-6 pl-4 bg-blue-200'>
-          <p className='pb-2'>
-            Number of Pools Created since block <strong>{fromBlock} :</strong> 
-            <span className='text-blue-800 font-bold pl-6 text-xl'>{poolEventData.length}</span>
-          </p>
-          <p>
-            Clicking on a Pool Address will take you to the Etherscan page for that contract.
-          </p>
-        </div>
-        <div className='py-6 pl-12 w-[60%] min-w-[600px] mx-auto my-0 justify-items-center'>
-          {displayPools(poolEventData, startIndex)}
-        </div>
-      </div>
+        <h1 className='text-red-900 font-semibold text-3xl text-center py-12'>
+          Recently Created Pools on Uniswap V3
+        </h1>
 
-      <div className='flex flex-row w-[50%] min-w-[500px] items-center py-6 mx-auto my-0 border-2 border-blue-600'>
-        <div className='flex flex-col w-[50%] items-center'>
-          <label className='mb-2'>
-            Show next 10 Pools
-          </label>
+        <div className="flex flex-col items-center text-center w-[50%] min-w-[460px] bg-blue-900 text-white h-[20vh] max-h-[280px] min-h-[180px] justify-center mx-auto my-0">
+          <p className='pb-4'>
+            To fetch the Recent Pools Created, enter a value for the <i>fromBlock</i>
+          </p>
+          <input
+            type="number"
+            value={fromBlock || ''}
+            onChange={handleBlockNumberChange}
+            placeholder="from block"
+            className="mb-4 px-2 py-1 w-[30%] text-black border border-blue-400"
+          />
           <button
-            className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
-            onClick={handleNextButtonClick}>
-            Next 10
-          </button>  
-        </div>
-        <div className='flex flex-col w-[45%] items-center'>
-          <label className='mb-2'>
-            Return to Beginning
-          </label>
-          <button
-            className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
-            onClick={handleResetButtonClick}>
-            Reset
+            onClick={getPoolData}
+            className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black mb-4">
+            Get Data
           </button>
         </div>
+
+        <div className='text-center'>
+          <div className='py-6 pl-4 mx-auto my-0 mt-10 bg-blue-200 w-[70%]'>
+            <p className='pb-2'>
+              Number of Pools Created since block <strong>{fromBlock} :</strong> 
+              <span className='text-blue-800 font-bold pl-6 text-xl'>{poolEventData.length}</span>
+            </p>
+            <p>
+              Clicking on a Pool Address will take you to the Etherscan page for that contract.
+            </p>
+          </div>
+          <div className='py-6 pl-12 w-[60%] min-w-[600px] mx-auto my-0 justify-items-center'>
+            {displayPools(poolEventData, startIndex)}
+          </div>
+        </div>
+
+        <div className='flex flex-row w-[50%] min-w-[500px] items-center py-6 mx-auto my-0 border-2 border-blue-600 bg-blue-900 text-white'>
+          <div className='flex flex-col w-[50%] items-center'>
+            <label className='mb-2'>
+              Show next 10 Pools
+            </label>
+            <button
+              className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
+              onClick={handleNextButtonClick}>
+              Next 10
+            </button>  
+          </div>
+          <div className='flex flex-col w-[45%] items-center'>
+            <label className='mb-2'>
+              Return to Beginning
+            </label>
+            <button
+              className="bg-blue-400 text-white border border-blue-300 px-6 py-2 hover:bg-white hover:text-black"
+              onClick={handleResetButtonClick}>
+              Reset
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
     </>
   )
 }

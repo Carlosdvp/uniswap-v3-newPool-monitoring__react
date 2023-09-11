@@ -72,42 +72,43 @@ export const TokenBalances = () => {
   return (
     <>
       <Header />
+
       <div className="w-[60%] min-w-[560px] bg-blue-900 text-white h-[50vh] max-h-[460px] min-h-[400px] pt-10 mt-10 justify-center mx-auto my-0">
-      <div className="flex flex-col items-center">
-        <label className="text-lg mb-8">
-          Enter a Pool Address to get the Token Balances
-        </label>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="address: 0x1...0"
-          className="mb-6 px-2 py-1 w-[60%] text-black"
-        />
-        <button
-          onClick={fetchPoolData}
-          className="bg-blue-400 text-white px-6 py-2 hover:bg-white hover:text-black">
-          Get Data
-        </button>
-      </div>
-      {poolAddress && (
-        <p className="px-12 pt-10 justify-self-center text-center">
-          <strong>Pool Address: </strong>
-          <a
-            href={`https://etherscan.io/address/${poolAddress}`}
-            target="_blank"
-            className="hover:text-blue-300">
-            {poolAddress}
-          </a>
-        </p>
-      )}
-      <div className="flex flex-col items-left md:w-[50%] w-[60%] mx-auto my-0 pt-10 md:pl-5">
-        {returnedTokenData.map((token, index) => (
-          <p key={index} className="pt-1">
-            {token.index}. <strong>{token.name}</strong>: {token.balance}
+        <div className="flex flex-col items-center">
+          <label className="text-lg mb-8">
+            Enter a Pool Address to get the Token Balances
+          </label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="address: 0x1...0"
+            className="mb-6 px-2 py-1 w-[60%] text-black"
+          />
+          <button
+            onClick={fetchPoolData}
+            className="bg-blue-400 text-white px-6 py-2 hover:bg-white hover:text-black">
+            Get Data
+          </button>
+        </div>
+        {poolAddress && (
+          <p className="px-12 pt-10 justify-self-center text-center">
+            <strong>Pool Address: </strong>
+            <a
+              href={`https://etherscan.io/address/${poolAddress}`}
+              target="_blank"
+              className="hover:text-blue-300">
+              {poolAddress}
+            </a>
           </p>
-        ))}
-      </div>
+        )}
+        <div className="flex flex-col items-left md:w-[50%] w-[60%] mx-auto my-0 pt-10 md:pl-5">
+          {returnedTokenData.map((token, index) => (
+            <p key={index} className="pt-1">
+              {token.index}. <strong>{token.name}</strong>: {token.balance}
+            </p>
+          ))}
+        </div>
       </div>
     </>
   )
