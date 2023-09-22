@@ -38,7 +38,7 @@ App now does the following:
     - when the Get Data button is clicked the pool data is saved to a Redux store
     - data displayed now stays visible when we navigate to another page and then back again.
 
-## Version 4 -- Current version
+## Version 4 
 
 - make the styling look more uniform across the app
 - add a display for the current block, it will update every 30 seconds
@@ -50,3 +50,34 @@ App now does the following:
 
 - Had to make a small change to the AWS Amplify configuration file
 - add "dist/" to the baseDirectory parameter.
+
+-----------------------------------------------------------------------------
+
+## Version 5 -- Current version
+
+Added a new page: Watch for Pools
+
+This page watches the Uniswap V3 Factory in real time and captures the data emiited by the PoolCreated event.
+
+This data is then displayed on the page, currently that is:
+    - the pool address
+    - the token0 address
+    - the token1 address
+
+I was thinking I could also add the logic to display token balances, but upon closer examination I see that this will not work at this time.
+
+Why? Well because while we capture the PoolCreated event, the liquidity may not be added right away. So if I want to display the pool's token data I may not get anything back at the moment we capture that event.
+
+We have a few options here:
+
+  1. Only display the pool and token addresses.
+      - the user can then do with that information as they wish
+  2. Display the pool and token addresses and the token metadata [symbol, name and balance].
+  3. Same as option 2 but without the token balances.
+      - Implement a method to activate a listener to watch for the liquidity.
+      - Once there is liquidity in the pool, we display the token balances.
+      - And a message stating that the Pool now has Liquidity.
+
+For the time being I will use these options as a mini Roadmap. Option 1 is already implemented.
+Next, I will implement the logic for option 2.
+The 3rd option might require more work, so I will leave that for a future feature upgrade. It will not be part of the current feature being worked on for this version.
