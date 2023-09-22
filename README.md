@@ -44,6 +44,9 @@ App now does the following:
 - add a display for the current block, it will update every 30 seconds
 - this will make it easier to get a block number to get started with the information gathering
 
-## Bug
+## Bug Fixed
 
 - for some weird reason it appears that AWS Amplify is using the wrong html file for the deployment of the application.
+
+- Had to make a small change to the AWS Amplify configuration file
+- add "dist/" to the baseDirectory parameter.

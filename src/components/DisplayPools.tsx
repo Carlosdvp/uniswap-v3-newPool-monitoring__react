@@ -105,7 +105,7 @@ const DisplayPools = () => {
     return data.slice(startIndex, startIndex + 10).map((pool, index) => (
       <div 
         key={index} 
-        className='flex bg-blue-900 text-white my-1 justify-between'>
+        className='flex bg-blue-900 text-white my-1 justify-between min-w-[460px]'>
         <span className='py-1 pl-4'>
           Pool Address {startIndex + index + 1}:
         </span>
@@ -145,7 +145,7 @@ const DisplayPools = () => {
           Recently Created Pools on Uniswap V3
         </h1>
 
-        <div className="flex flex-col items-center text-center w-[60%] min-w-[460px] bg-blue-900 text-white h-[25vh] max-h-[380px] min-h-[180px] justify-center mx-auto my-0">
+        <div className="flex flex-col items-center text-center w-[60%] min-w-[500px] bg-blue-900 text-white h-[25vh] max-h-[380px] min-h-[180px] justify-center mx-auto my-0">
           <p className='pb-4'>
             To fetch the Recent Pools Created, enter a value for the <i>fromBlock</i>
           </p>

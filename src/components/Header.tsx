@@ -18,6 +18,11 @@ const Header = () => {
         className="text-white hover:text-blue-300">
         Token Balances
       </Link>
+      <Link 
+        to="/pool-watcher" 
+        className="text-white hover:text-blue-300">
+        Watch For Pools
+      </Link>
     </nav>
   );
 }
