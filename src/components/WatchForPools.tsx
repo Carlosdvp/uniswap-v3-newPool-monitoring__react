@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers'
-// import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
+import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
 import Header from './Header';
 
-// const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
+const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
 
-// const settings: {apikey: string | undefined; network: Network} = {
-//   apikey: apiKey,
-//   network: Network.ETH_MAINNET,
-// }
-// const alchemy: Alchemy = new Alchemy(settings);
+const settings: {apikey: string | undefined; network: Network} = {
+  apikey: apiKey,
+  network: Network.ETH_MAINNET,
+}
+const alchemy: Alchemy = new Alchemy(settings);
 
-export interface TokenBalance {
-  index: string;
+export interface TokenData {
+  symbol: string | null;
   name: string | null;
   balance: string;
 }
@@ -39,8 +39,6 @@ export const WatchForPools = () => {
 
   const watchUniswapForPools = async () => {
     uniswapContact.on('PoolCreated', (token0, token1, fee, tickSpacing, pool) => {
-      console.log(`New Pool created at ${pool} with ${token0} and ${token1}`);
-
       const newPoolData: PoolCreated = {
         token0,
         token1,
@@ -49,12 +47,54 @@ export const WatchForPools = () => {
         pool,
       };
       setPoolData([newPoolData])
+
+      console.log(`New pool create at ${pool} with ${token0} and ${token1}`)
     })
-  }
+  };
+
+  async function fetchTokenBalances (poolAddress: string): Promise<TokenData[]> {
+    const balances = await alchemy.core.getTokenBalances(poolAddress);
+
+    const nonZeroBalances = balances.tokenBalances.filter((token) => {
+      return token.tokenBalance !== '0';
+    })
+
+    let tokenDataArray: TokenData[] = [];
+
+    for (let token of nonZeroBalances) {
+      let balance: number | string | null = token.tokenBalance;
+  
+      const metadata: TokenMetadataResponse = await alchemy.core.getTokenMetadata(token.contractAddress);
+
+      if (typeof balance === 'string') {
+        balance = Number(balance);
+      }
+      if (metadata.decimals !== null) {
+        balance = balance as number / Math.pow(10, metadata.decimals);
+        balance = balance.toFixed(4);
+      }
+
+      const tokenData: TokenData = {
+        symbol: metadata.symbol,
+        name: metadata.name ?? "Unknown",
+        balance: `${balance} ${metadata.symbol}`,
+      };
+
+      tokenDataArray.push(tokenData);
+    }
+
+    return tokenDataArray;
+  };
 
   useEffect(() => {
     watchUniswapForPools();
   }, []);
+  
+  useEffect(() => {
+    if (poolData.length > 0) {
+      fetchTokenBalances(poolData[0]?.pool);
+    }
+  }, [poolData]);
 
   return (
     <>
