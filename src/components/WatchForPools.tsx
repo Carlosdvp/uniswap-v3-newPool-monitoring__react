@@ -12,8 +12,8 @@ const settings: {apikey: string | undefined; network: Network} = {
 }
 const alchemy: Alchemy = new Alchemy(settings);
 
-export interface TokenData {
-  symbol: string | null;
+export interface TokenBalance {
+  index: string;
   name: string | null;
   balance: string;
 }
@@ -36,6 +36,7 @@ const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi
 
 export const WatchForPools = () => {
   const [poolData, setPoolData] = useState<PoolCreated[]>([]);
+  const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
 
   const watchUniswapForPools = async () => {
     uniswapContact.on('PoolCreated', (token0, token1, fee, tickSpacing, pool) => {
@@ -52,14 +53,14 @@ export const WatchForPools = () => {
     })
   };
 
-  async function fetchTokenBalances (poolAddress: string): Promise<TokenData[]> {
+  async function fetchTokenBalances (poolAddress: string): Promise<TokenBalance[]> {
     const balances = await alchemy.core.getTokenBalances(poolAddress);
-
     const nonZeroBalances = balances.tokenBalances.filter((token) => {
       return token.tokenBalance !== '0';
     })
 
-    let tokenDataArray: TokenData[] = [];
+    let i = 1;
+    let tokenBalances: TokenBalance[] = [];
 
     for (let token of nonZeroBalances) {
       let balance: number | string | null = token.tokenBalance;
@@ -74,16 +75,17 @@ export const WatchForPools = () => {
         balance = balance.toFixed(4);
       }
 
-      const tokenData: TokenData = {
-        symbol: metadata.symbol,
-        name: metadata.name ?? "Unknown",
-        balance: `${balance} ${metadata.symbol}`,
-      };
+      tokenBalances.push({
+        index: `${i}`,
+        name: metadata.name,
+        balance: `${balance} ${metadata.symbol}`
+      })
 
-      tokenDataArray.push(tokenData);
+      console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
     }
+    setReturnedTokenData(tokenBalances);
 
-    return tokenDataArray;
+    return tokenBalances;
   };
 
   useEffect(() => {
@@ -101,14 +103,14 @@ export const WatchForPools = () => {
       <Header />
 
       <div className="w-[60%] min-w-[560px] bg-blue-900 text-white h-[50vh] max-h-[460px] min-h-[400px] pt-10 mt-10 justify-center mx-auto my-0">
-        <p className='justify-self-center text-center'>
+        <p className='justify-self-center text-center text-xl border-b border-b-white pb-6'>
           Newly Created Pools will be displayed here.
         </p>
         {poolData.length > 0 && (
           <div className="px-12 pt-10 justify-self-center text-center">
-            {poolData.map((data, index) => (
-              <div key={index}>
-                <strong>Pool Address {index + 1}: </strong>
+            {poolData.map((data) => (
+              <div>
+                <strong>Pool Address: </strong>
                 <a
                   href={`https://etherscan.io/address/${data.pool}`}
                   target="_blank"
@@ -125,6 +127,13 @@ export const WatchForPools = () => {
             ))}
           </div>
         )}
+        <div className="flex flex-col items-left md:w-[50%] w-[60%] mx-auto my-0 pt-10 md:pl-5">
+          {returnedTokenData.map((token, index) => (
+            <p key={index} className="pt-1">
+              {token.index}. <strong>{token.name}</strong>: {token.balance}
+            </p>
+          ))}
+        </div>
       </div>
     </>
   )
