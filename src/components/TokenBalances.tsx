@@ -108,10 +108,14 @@ export const TokenBalances = () => {
             </a>
           </p>
         )}
+        
+        {isLoading && (
+          <div className='flex justify-center pt-12'>
+            <CircularProgress color="inherit" />
+          </div>
+        )}
+
         <div className="flex flex-col items-left md:w-[50%] w-[60%] mx-auto my-0 pt-10 md:pl-5">
-          {isLoading && (
-            <CircularProgress color="secondary" />
-          )}
           {returnedTokenData.map((token, index) => (
             <p key={index} className="pt-1">
               {token.index}. <strong>{token.name}</strong>: {token.balance}
