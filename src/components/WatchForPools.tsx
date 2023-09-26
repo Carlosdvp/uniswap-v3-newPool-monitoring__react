@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LinearProgress from '@mui/material/LinearProgress';
 import { ethers } from 'ethers'
 import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
@@ -37,6 +38,7 @@ const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi
 export const WatchForPools = () => {
   const [poolData, setPoolData] = useState<PoolCreated[]>([]);
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const watchUniswapForPools = async () => {
     uniswapContact.on('PoolCreated', (token0, token1, fee, tickSpacing, pool) => {
@@ -94,7 +96,8 @@ export const WatchForPools = () => {
   
   useEffect(() => {
     if (poolData.length > 0) {
-      fetchTokenBalances(poolData[0]?.pool);
+      fetchTokenBalances(poolData[0]?.pool)
+        .finally(() => setIsLoading(false));
     }
   }, [poolData]);
 
@@ -106,6 +109,11 @@ export const WatchForPools = () => {
         <p className='justify-self-center text-center text-xl border-b border-b-white pb-6'>
           Newly Created Pools will be displayed here.
         </p>
+        {isLoading && (
+          <div className='pt-36 w-[80%] mx-auto my-0'>
+            <LinearProgress color="primary" />
+          </div>
+        )}
         {poolData.length > 0 && (
           <div className="px-12 pt-10 justify-self-center text-center">
             {poolData.map((data) => (
