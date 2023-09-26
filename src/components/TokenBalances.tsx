@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
-import Header from './Header';
+import CircularProgress from '@mui/material/CircularProgress'
+import Header from './Header'
 
 const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
 
@@ -21,6 +22,7 @@ export const TokenBalances = () => {
   const [address, setAddress ] = useState<string>('');
   const [poolAddress, setPoolAddress ] = useState<string>('');
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function fetchTokenBalances (address: string): Promise<TokenBalance[]> {
     const balances = await alchemy.core.getTokenBalances(address)
@@ -54,6 +56,7 @@ export const TokenBalances = () => {
   
       console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
     }
+    setIsLoading(false);
   
     return tokenBalances;
   }
@@ -86,7 +89,10 @@ export const TokenBalances = () => {
             className="mb-6 px-2 py-1 w-[60%] text-black"
           />
           <button
-            onClick={fetchPoolData}
+            onClick={() => {
+              setIsLoading(true);
+              fetchPoolData();
+            }}
             className="bg-blue-400 text-white px-6 py-2 hover:bg-white hover:text-black">
             Get Data
           </button>
@@ -102,6 +108,13 @@ export const TokenBalances = () => {
             </a>
           </p>
         )}
+
+        {isLoading && (
+          <div className='flex justify-center pt-12'>
+            <CircularProgress color="inherit" />
+          </div>
+        )}
+
         <div className="flex flex-col items-left md:w-[50%] w-[60%] mx-auto my-0 pt-10 md:pl-5">
           {returnedTokenData.map((token, index) => (
             <p key={index} className="pt-1">
