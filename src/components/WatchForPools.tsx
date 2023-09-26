@@ -116,8 +116,8 @@ export const WatchForPools = () => {
         )}
         {poolData.length > 0 && (
           <div className="px-12 pt-10 justify-self-center text-center">
-            {poolData.map((data) => (
-              <div>
+            {poolData.map((data, index) => (
+              <div key={index}>
                 <strong>Pool Address: </strong>
                 <a
                   href={`https://etherscan.io/address/${data.pool}`}

@@ -27,7 +27,7 @@ The App consists of 4 pages:
         - This will get the token pair information for the Pool
         - That is, the token names, symbols and balances
 
-    - Watch for Pools
+    - Watch for Pools (Currently under development)
         - This page starts watching the Uniswap V3 factory contract in real time
         - Once a new Pool created event is emitted the corresponding Pool data will be displayed on the page
         - Keep in mind that Pools are not created all the time, so it may take a while before a new pool is created.
