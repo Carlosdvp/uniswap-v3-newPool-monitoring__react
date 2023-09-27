@@ -3,16 +3,18 @@
 ## React + TypeScript + Vite App
 
 Tech Stack:
-    - React
-    - Redux
-    - React Router
-    - Typescript
-    - Vite
-    - Ethers.js
-    - Alchemy-sdk
-    - TailwindCSS
+
+  - React
+  - Redux
+  - React Router
+  - Typescript
+  - Vite
+  - Ethers.js
+  - Alchemy-sdk
+  - TailwindCSS
 
 The App consists of 4 pages:
+
     - Home
         - Here we see some basic intructions for using the dApp
     - Find Pools
