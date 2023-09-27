@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
-import CircularProgress from '@mui/material/CircularProgress'
-import Header from './Header'
+import CircularProgress from '@mui/material/CircularProgress';
+import Header from './Header';
 
 const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
 
@@ -84,7 +84,7 @@ export const TokenBalances = () => {
           <input
             type="text"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => setAddress(e.target.value) }
             placeholder="address: 0x1...0"
             className="mb-6 px-2 py-1 w-[60%] text-black"
           />
@@ -108,7 +108,7 @@ export const TokenBalances = () => {
             </a>
           </p>
         )}
-
+        
         {isLoading && (
           <div className='flex justify-center pt-12'>
             <CircularProgress color="inherit" />

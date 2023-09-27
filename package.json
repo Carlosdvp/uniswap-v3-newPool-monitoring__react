@@ -1,7 +1,7 @@
 {
   "name": "uni-v3-monitoring-react",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

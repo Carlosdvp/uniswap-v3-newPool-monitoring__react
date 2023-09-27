@@ -39,7 +39,7 @@ const DisplayPools = () => {
       console.error('Could not get current block number', error)
     }
   }
-  // get latest block number when component is loaded
+  
   useEffect(() => {
     getCurrentBlock();
   }, []);
@@ -105,7 +105,7 @@ const DisplayPools = () => {
     return data.slice(startIndex, startIndex + 10).map((pool, index) => (
       <div 
         key={index} 
-        className='flex bg-blue-900 text-white my-1 justify-between min-w-[460px]'>
+        className='flex bg-blue-900 text-white justify-between my-1'>
         <span className='py-1 pl-4'>
           Pool Address {startIndex + index + 1}:
         </span>
@@ -180,7 +180,7 @@ const DisplayPools = () => {
               Clicking on a Pool Address will take you to the Etherscan page for that contract.
             </p>
           </div>
-          <div className='w-[60%] min-w-[600px] mx-auto my-0'>
+          <div className='w-[60%] min-w-[500px] mx-auto my-0'>
             {displayPools(poolEventData, startIndex)}
           </div>
         </div>

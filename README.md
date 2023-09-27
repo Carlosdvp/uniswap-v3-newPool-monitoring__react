@@ -36,7 +36,7 @@ The App consists of 4 pages:
 
 --------------------------------------------------------------------------------------------------------------------
 
-# Project Development DEtails are included below
+# Project Development Details and Roadmap
 
 ## Version 2
 
@@ -113,6 +113,4 @@ The 3rd option might require more work, so I will leave that for a future featur
 
 ### Features and Upgrades for the current version
 
-- Add a 'Loading' spinner indicator to the Token Balances and Watch for Pools pages
-
-- Add a slice for the Token Balances data to the Redux store, it would be nice if the data here also had some persistence.
+- Add some tests
