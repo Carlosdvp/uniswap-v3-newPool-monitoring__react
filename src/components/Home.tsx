@@ -8,13 +8,13 @@ export const Home = () => {
         The purpose of this application is to fetch data from newly created Uniswap V3 pools.
       </p>
       <p className='pb-6 w-[80%]'>
-        In the <strong>Find Pools</strong> tab you can enter a block number and fetch the new pools created from that block up to the latest block on the Ethereum blockchain.
+        In the <strong>Find Pools</strong> page you can enter a block number and fetch the new pools created from that block up to the latest block on the Ethereum blockchain.
       </p>
       <p className='pb-6 w-[80%]'>
-        In the <strong>Token Balances</strong> tab you can use any of the pool addresses you received and look up the tokens in those pools, you will get the token name, the symbol and the balance.
+        In the <strong>Token Balances</strong> page you can use any of the pool addresses you received and look up the tokens in those pools, you will get the token name, the symbol and the balance.
       </p>
       <p className='pb-6 w-[80%]'>
-        In the <strong>Watch For Pools</strong> tab, you can monitor real-time updates for newly created pools. Keep in mind that new pools are not created frequently; on average, there might be just a few to a dozen new pools per day. The frequency can vary significantly depending on market conditions.
+        On the <strong>Watch For Pools</strong> page, you can track real-time updates for newly created pools. Simply click 'Start Watching' to initiate monitoring, which continues until you click 'Stop Watching'. When data for a new pool arrives, it's displayed until a fresh event updates it. If you need to evaluate the data it is advised to stop watching and resume once you are ready. Note that new pools are infrequent, averaging a few to a dozen daily, subject to market dynamics.
       </p>
     </div>
   )

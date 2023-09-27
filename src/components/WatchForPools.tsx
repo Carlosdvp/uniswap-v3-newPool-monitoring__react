@@ -38,7 +38,6 @@ const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
 const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 export const WatchForPools = () => {
-  const [poolData, setPoolData] = useState<PoolCreated[]>([]);
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isWatching, setIsWatching] = useState<boolean>(false); 
@@ -105,11 +104,7 @@ export const WatchForPools = () => {
   
   useEffect(() => {
     if (newPoolData.length > 0) {
-      setPoolData(newPoolData);
-    }
-
-    if (poolData.length > 0) {
-      fetchTokenBalances(poolData[0]?.pool)
+      fetchTokenBalances(newPoolData[0]?.pool)
         .finally(() => setIsLoading(false));
     }
   }, [newPoolData]);
@@ -132,9 +127,9 @@ export const WatchForPools = () => {
             <LinearProgress color="primary" />
           </div>
         )}
-        {poolData.length > 0 && (
+        {newPoolData.length > 0 && (
           <div className="px-12 pt-10 justify-self-center text-center">
-            {poolData.map((data, index) => (
+            {newPoolData.map((data, index) => (
               <div key={index}>
                 <strong>Pool Address: </strong>
                 <a
