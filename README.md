@@ -27,7 +27,7 @@ The App consists of 4 pages:
         - This will get the token pair information for the Pool
         - That is, the token names, symbols and balances
 
-    - Watch for Pools
+    - Watch for Pools (Currently under development)
         - This page starts watching the Uniswap V3 factory contract in real time
         - Once a new Pool created event is emitted the corresponding Pool data will be displayed on the page
         - Keep in mind that Pools are not created all the time, so it may take a while before a new pool is created.
@@ -36,7 +36,7 @@ The App consists of 4 pages:
 
 --------------------------------------------------------------------------------------------------------------------
 
-# Project Development DEtails are included below
+# Project Development Details and Roadmap
 
 ## Version 2
 
@@ -113,6 +113,4 @@ The 3rd option might require more work, so I will leave that for a future featur
 
 ### Features and Upgrades for the current version
 
-- Add a 'Loading' spinner indicator to the Token Balances and Watch for Pools pages
-
-- Add a slice for the Token Balances data to the Redux store, it would be nice if the data here also had some persistence.
+- Add some tests

@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setNewPoolData } from '../store/newPoolDataSlice';
+import { RootState } from '../store';
+import LinearProgress from '@mui/material/LinearProgress';
+import Button from '@mui/material/Button';
 import { ethers } from 'ethers'
 import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
@@ -21,8 +26,6 @@ export interface TokenBalance {
 interface PoolCreated{
   token0: string;
   token1: string;
-  fee: number;
-  tickSpacing: number;
   pool: string;
 }
 
@@ -35,21 +38,23 @@ const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
 const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 export const WatchForPools = () => {
-  const [poolData, setPoolData] = useState<PoolCreated[]>([]);
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isWatching, setIsWatching] = useState<boolean>(false); 
+
+  const dispatch = useDispatch();
+  
+  const newPoolData = useSelector((state: RootState) => state.newPoolData.data);
 
   const watchUniswapForPools = async () => {
-    uniswapContact.on('PoolCreated', (token0, token1, fee, tickSpacing, pool) => {
+    uniswapContact.on('PoolCreated', (token0, token1, _fee, _tickSpacing, pool) => {
       const newPoolData: PoolCreated = {
         token0,
         token1,
-        fee,
-        tickSpacing,
         pool,
       };
-      setPoolData([newPoolData])
 
-      console.log(`New pool create at ${pool} with ${token0} and ${token1}`)
+      dispatch(setNewPoolData([newPoolData]));
     })
   };
 
@@ -88,15 +93,21 @@ export const WatchForPools = () => {
     return tokenBalances;
   };
 
-  useEffect(() => {
-    watchUniswapForPools();
-  }, []);
+  const toggleWatcher = async () => {
+    if (isWatching) {
+      await uniswapContact.removeAllListeners('PoolCreated');
+    } else {
+      watchUniswapForPools();
+    }
+    setIsWatching(!isWatching);
+  }
   
   useEffect(() => {
-    if (poolData.length > 0) {
-      fetchTokenBalances(poolData[0]?.pool);
+    if (newPoolData.length > 0) {
+      fetchTokenBalances(newPoolData[0]?.pool)
+        .finally(() => setIsLoading(false));
     }
-  }, [poolData]);
+  }, [newPoolData]);
 
   return (
     <>
@@ -106,10 +117,20 @@ export const WatchForPools = () => {
         <p className='justify-self-center text-center text-xl border-b border-b-white pb-6'>
           Newly Created Pools will be displayed here.
         </p>
-        {poolData.length > 0 && (
+        <div className='text-center pt-6'>
+          <Button onClick={toggleWatcher} variant="contained" color='info'>
+            {isWatching ? 'Stop Watching' : 'Start Watching'}
+          </Button>
+        </div>
+        {isLoading && isWatching && (
+          <div className='pt-36 w-[80%] mx-auto my-0'>
+            <LinearProgress color="primary" />
+          </div>
+        )}
+        {newPoolData.length > 0 && (
           <div className="px-12 pt-10 justify-self-center text-center">
-            {poolData.map((data) => (
-              <div>
+            {newPoolData.map((data, index) => (
+              <div key={index}>
                 <strong>Pool Address: </strong>
                 <a
                   href={`https://etherscan.io/address/${data.pool}`}
