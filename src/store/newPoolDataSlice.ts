@@ -3,8 +3,6 @@ import { Draft, PayloadAction, createSlice } from '@reduxjs/toolkit'
 interface PoolCreated{
   token0: string;
   token1: string;
-  fee: number;
-  tickSpacing: number;
   pool: string;
 }
 
