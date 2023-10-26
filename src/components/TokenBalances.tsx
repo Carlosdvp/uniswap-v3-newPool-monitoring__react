@@ -1,15 +1,25 @@
 import { useState } from 'react'
-import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
+import { ethers } from 'ethers'
+import { abi } from '@openzeppelin/contracts/build/contracts/ERC20.json'
 import CircularProgress from '@mui/material/CircularProgress';
 import Header from './Header';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
-const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
+const { 
+  VITE_MAIN_NET_URL 
+} = import.meta.env;
 
-const settings: {apikey: string | undefined; network: Network} = {
-  apikey: apiKey,
-  network: Network.ETH_MAINNET,
+/* Contracts and Global Variables */
+const ERC20Abi = abi;
+const provider = new ethers.JsonRpcProvider(VITE_MAIN_NET_URL);
+
+interface EventDetails {
+  txHash: string; 
+  token0: string; 
+  token1: string; 
+  poolAddress: string;
 }
-const alchemy: Alchemy = new Alchemy(settings);
 
 export interface TokenBalance {
   index: string;
@@ -24,38 +34,44 @@ export const TokenBalances = () => {
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const savedPoolData = useSelector((state: RootState) => state.poolData.data);
+
+
   async function fetchTokenBalances (address: string): Promise<TokenBalance[]> {
-    const balances = await alchemy.core.getTokenBalances(address)
-  
-    const nonZeroBalances = balances.tokenBalances.filter((token) => {
-      return token.tokenBalance !== '0';
-    })
-  
-    let i = 1;
+    // try {
+      
+    // } catch (error) {
+    //   console.error('Unable to fetch Token data from this pool: ${poolAddress}', error)
+    // }
     let tokenBalances: TokenBalance[] = [];
-  
-    for (let token of nonZeroBalances) {
-      let balance: number | string | null = token.tokenBalance;
-  
-      const metadata: TokenMetadataResponse = await alchemy.core.getTokenMetadata(token.contractAddress);
-  
-      // compute token balance in human readable format
-      if (typeof balance === 'string') {
-        balance = Number(balance);
+    const pool = savedPoolData.find((savedPool) => savedPool.poolAddress === address);
+
+    if (pool) {
+      const { token0, token1, poolAddress } = pool;
+      const tokenAddresses = [token0, token1];
+
+      for (let i = 0; i < tokenAddresses.length; i++) {
+        const tokenAddress = tokenAddresses[i];
+        // Initialize the token contracts
+        const tokenContract = new ethers.Contract(tokenAddress, ERC20Abi, provider);
+        
+        // Get token metadata
+        const tokenName = await tokenContract.name();
+        const tokenSymbol = await tokenContract.symbol();
+        const tokenDecimals = await tokenContract.decimals();
+        
+        let balance = await tokenContract.balanceOf(poolAddress);
+        let formattedBalance = ethers.formatUnits(balance, Number(tokenDecimals));
+      
+        tokenBalances.push({
+          index: `${i + 1}`,
+          name: tokenName,
+          balance: `${formattedBalance} ${tokenSymbol}`
+        });
       }
-      if (metadata.decimals !== null) {
-        balance = balance as number / Math.pow(10, metadata.decimals);
-        balance = balance.toFixed(4);
-      }
-  
-      tokenBalances.push({
-        index: `${i}`,
-        name: metadata.name,
-        balance: `${balance} ${metadata.symbol}`
-      })
-  
-      console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
     }
+    console.log('fetchTokenBalances - final answer: ', tokenBalances)
+    
     setIsLoading(false);
   
     return tokenBalances;

@@ -13,12 +13,12 @@ interface EventDetails {
   poolAddress: string;
 }
 
-const ETH_MAINNET = import.meta.env.VITE_MAIN_NET_URL;
+const { VITE_MAIN_NET_URL } = import.meta.env;
 
 /* Contracts and Global Variables */
 const factoryAbi = IUniswapV3Factory.abi;
 const uniswapFactoryAddress = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
-const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
+const provider = new ethers.JsonRpcProvider(VITE_MAIN_NET_URL);
 const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 const DisplayPools = () => {
