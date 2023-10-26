@@ -1,25 +1,17 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
 import { abi } from '@openzeppelin/contracts/build/contracts/ERC20.json'
-import CircularProgress from '@mui/material/CircularProgress';
-import Header from './Header';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import CircularProgress from '@mui/material/CircularProgress';
+import Header from './Header';
 
 const { 
   VITE_MAIN_NET_URL 
 } = import.meta.env;
 
-/* Contracts and Global Variables */
 const ERC20Abi = abi;
 const provider = new ethers.JsonRpcProvider(VITE_MAIN_NET_URL);
-
-interface EventDetails {
-  txHash: string; 
-  token0: string; 
-  token1: string; 
-  poolAddress: string;
-}
 
 export interface TokenBalance {
   index: string;
@@ -36,45 +28,47 @@ export const TokenBalances = () => {
 
   const savedPoolData = useSelector((state: RootState) => state.poolData.data);
 
-
   async function fetchTokenBalances (address: string): Promise<TokenBalance[]> {
-    // try {
-      
-    // } catch (error) {
-    //   console.error('Unable to fetch Token data from this pool: ${poolAddress}', error)
-    // }
-    let tokenBalances: TokenBalance[] = [];
-    const pool = savedPoolData.find((savedPool) => savedPool.poolAddress === address);
-
-    if (pool) {
-      const { token0, token1, poolAddress } = pool;
-      const tokenAddresses = [token0, token1];
-
-      for (let i = 0; i < tokenAddresses.length; i++) {
-        const tokenAddress = tokenAddresses[i];
-        // Initialize the token contracts
-        const tokenContract = new ethers.Contract(tokenAddress, ERC20Abi, provider);
-        
-        // Get token metadata
-        const tokenName = await tokenContract.name();
-        const tokenSymbol = await tokenContract.symbol();
-        const tokenDecimals = await tokenContract.decimals();
-        
-        let balance = await tokenContract.balanceOf(poolAddress);
-        let formattedBalance = ethers.formatUnits(balance, Number(tokenDecimals));
-      
-        tokenBalances.push({
-          index: `${i + 1}`,
-          name: tokenName,
-          balance: `${formattedBalance} ${tokenSymbol}`
-        });
-      }
-    }
-    console.log('fetchTokenBalances - final answer: ', tokenBalances)
-    
-    setIsLoading(false);
+    try {
+      let tokenBalances: TokenBalance[] = [];
+      const pool = savedPoolData.find((savedPool) => savedPool.poolAddress === address);
   
-    return tokenBalances;
+      if (pool) {
+        const { token0, token1, poolAddress } = pool;
+        const tokenAddresses: string[] = [token0, token1];
+  
+        for (let i = 0; i < tokenAddresses.length; i++) {
+          const tokenAddress: string = tokenAddresses[i];
+          // Initialize the token contracts
+          const tokenContract: ethers.Contract = new ethers.Contract(tokenAddress, ERC20Abi, provider);
+          
+          // Get token metadata
+          const tokenName = await tokenContract.name();
+          const tokenSymbol = await tokenContract.symbol();
+          const tokenDecimals = await tokenContract.decimals();
+          
+          // Format Token Balance
+          let balance = await tokenContract.balanceOf(poolAddress);
+          let formattedBalance = ethers.formatUnits(balance, Number(tokenDecimals));
+          let balanceToDisplay = parseFloat(formattedBalance).toFixed(5);
+        
+          tokenBalances.push({
+            index: `${i + 1}`,
+            name: tokenName,
+            balance: `${balanceToDisplay} ${tokenSymbol}`
+          });
+        }
+      }
+      setIsLoading(false);
+    
+      return tokenBalances;
+
+    } catch (error) {
+      console.error('Unable to fetch Token data from this pool: ${poolAddress}', error)
+      setIsLoading(false);
+
+      return [];
+    }
   }
 
   const fetchPoolData = async () => {
