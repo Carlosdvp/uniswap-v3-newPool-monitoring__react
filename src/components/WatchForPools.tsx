@@ -2,22 +2,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setNewPoolData } from '../store/newPoolDataSlice';
 import { RootState } from '../store';
+import { ethers } from 'ethers'
+import { abi } from '@openzeppelin/contracts/build/contracts/ERC20.json'
+import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
 import LinearProgress from '@mui/material/LinearProgress';
 import Button from '@mui/material/Button';
-import { ethers } from 'ethers'
-import { Alchemy, Network, TokenMetadataResponse } from 'alchemy-sdk'
-import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
 import Header from './Header';
 
-const apiKey = import.meta.env.VITE_MAINNET_API_KEY;
-
-const settings: {apikey: string | undefined; network: Network} = {
-  apikey: apiKey,
-  network: Network.ETH_MAINNET,
-}
-const alchemy: Alchemy = new Alchemy(settings);
-
-export interface TokenBalance {
+interface TokenBalance {
   index: string;
   name: string | null;
   balance: string;
@@ -33,9 +25,10 @@ const ETH_MAINNET = import.meta.env.VITE_MAIN_NET_URL;
 
 /* Contracts and Global Variables */
 const factoryAbi = IUniswapV3Factory.abi;
+const ERC20Abi = abi;
 const uniswapFactoryAddress = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
 const provider = new ethers.JsonRpcProvider(ETH_MAINNET);
-const uniswapContact = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
+const uniswapContract = new ethers.BaseContract(uniswapFactoryAddress, factoryAbi, provider);
 
 export const WatchForPools = () => {
   const [returnedTokenData, setReturnedTokenData ] = useState<TokenBalance[]>([]);
@@ -47,7 +40,7 @@ export const WatchForPools = () => {
   const newPoolData = useSelector((state: RootState) => state.newPoolData.data);
 
   const watchUniswapForPools = async () => {
-    uniswapContact.on('PoolCreated', (token0, token1, _fee, _tickSpacing, pool) => {
+    uniswapContract.on('PoolCreated', (token0, token1, _fee, _tickSpacing, pool) => {
       const newPoolData: PoolCreated = {
         token0,
         token1,
@@ -58,44 +51,50 @@ export const WatchForPools = () => {
     })
   };
 
-  async function fetchTokenBalances (poolAddress: string): Promise<TokenBalance[]> {
-    const balances = await alchemy.core.getTokenBalances(poolAddress);
-    const nonZeroBalances = balances.tokenBalances.filter((token) => {
-      return token.tokenBalance !== '0';
-    })
-
-    let i = 1;
-    let tokenBalances: TokenBalance[] = [];
-
-    for (let token of nonZeroBalances) {
-      let balance: number | string | null = token.tokenBalance;
+  async function fetchTokenBalances (address: string): Promise<TokenBalance[]> {
+    try {
+      let tokenBalances: TokenBalance[] = [];
   
-      const metadata: TokenMetadataResponse = await alchemy.core.getTokenMetadata(token.contractAddress);
-
-      if (typeof balance === 'string') {
-        balance = Number(balance);
+      if (newPoolData.length > 0) {
+        const { token0, token1 } = newPoolData[0];
+        const tokenAddresses: string[] = [token0, token1];
+  
+        for (let i = 0; i < tokenAddresses.length; i++) {
+          const tokenAddress: string = tokenAddresses[i];
+          // Initialize the token contracts
+          const tokenContract: ethers.Contract = new ethers.Contract(tokenAddress, ERC20Abi, provider);
+          
+          // Get token metadata
+          const tokenName = await tokenContract.name();
+          const tokenSymbol = await tokenContract.symbol();
+          const tokenDecimals = await tokenContract.decimals();
+          
+          // Format Token Balance
+          let balance = await tokenContract.balanceOf(address);
+          let formattedBalance = ethers.formatUnits(balance, Number(tokenDecimals));
+          let balanceToDisplay = parseFloat(formattedBalance).toFixed(5);
+        
+          tokenBalances.push({
+            index: `${i + 1}`,
+            name: tokenName,
+            balance: `${balanceToDisplay} ${tokenSymbol}`
+          });
+        }
       }
-      if (metadata.decimals !== null) {
-        balance = balance as number / Math.pow(10, metadata.decimals);
-        balance = balance.toFixed(4);
-      }
+      setReturnedTokenData(tokenBalances);
+    
+      return tokenBalances;
 
-      tokenBalances.push({
-        index: `${i}`,
-        name: metadata.name,
-        balance: `${balance} ${metadata.symbol}`
-      })
+    } catch (error) {
+      console.error('Unable to fetch Token data from this pool: ${poolAddress}', error)
 
-      console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
+      return [];
     }
-    setReturnedTokenData(tokenBalances);
-
-    return tokenBalances;
   };
 
   const toggleWatcher = async () => {
     if (isWatching) {
-      await uniswapContact.removeAllListeners('PoolCreated');
+      await uniswapContract.removeAllListeners('PoolCreated');
     } else {
       watchUniswapForPools();
     }
