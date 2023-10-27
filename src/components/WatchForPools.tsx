@@ -8,6 +8,7 @@ import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/interfaces/I
 import LinearProgress from '@mui/material/LinearProgress';
 import Button from '@mui/material/Button';
 import Header from './Header';
+import { getTokenPairData } from '../utils';
 
 interface TokenBalance {
   index: string;
@@ -64,20 +65,13 @@ export const WatchForPools = () => {
           // Initialize the token contracts
           const tokenContract: ethers.Contract = new ethers.Contract(tokenAddress, ERC20Abi, provider);
           
-          // Get token metadata
-          const tokenName = await tokenContract.name();
-          const tokenSymbol = await tokenContract.symbol();
-          const tokenDecimals = await tokenContract.decimals();
-          
-          // Format Token Balance
-          let balance = await tokenContract.balanceOf(address);
-          let formattedBalance = ethers.formatUnits(balance, Number(tokenDecimals));
-          let balanceToDisplay = parseFloat(formattedBalance).toFixed(5);
+         // Get token balances and metadata
+         const tokenPair = await getTokenPairData(tokenContract, address)
         
           tokenBalances.push({
             index: `${i + 1}`,
-            name: tokenName,
-            balance: `${balanceToDisplay} ${tokenSymbol}`
+            name: tokenPair.tokenName,
+            balance: `${tokenPair.balanceToDisplay} ${tokenPair.tokenSymbol}`
           });
         }
       }
